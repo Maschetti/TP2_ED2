@@ -1,3 +1,5 @@
 #include "ibvc2f.h"
 
-void IBVC2F();
+void IBVC2F() {
+  
+}

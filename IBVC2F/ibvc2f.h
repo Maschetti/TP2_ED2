@@ -2,8 +2,6 @@
 #define IBVC2f_H
 #include <stdio.h>
 
-void IBVC2F() {
-
-}
+void IBVC2F();
 
 #endif
