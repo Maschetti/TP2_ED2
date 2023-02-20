@@ -3,6 +3,7 @@
 #include "IBVC2F/ibvc2f.h"
 #include "IBVCF1/ibvcf1.h"
 #include "QuickSortExterno/quickSorteExterno.h"
+#include "Tad/tad.h"
 
 int main(int numeroArgumentos, char **argumentos) {
   FILE *arquivo = NULL;
