@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../TAD/tad.h"
+
+void imprimeArquivo(FILE *arquivo, int numeroItens);
 
 void parametrosParaInteiro(int numeroArgumentos, char **argumentos, int *metodo, int *quantidade, int *situacao, int *P);
 

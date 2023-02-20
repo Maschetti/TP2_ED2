@@ -1,5 +1,13 @@
 #include "functions.h"
 
+void imprimeArquivo(FILE* arquivo, int numeroItens) {
+  Aluno auxiliar;
+  for(int i = 0; i < numeroItens; i++) {
+    fscanfAluno(arquivo, &auxiliar);
+    printAluno(auxiliar);
+  }
+}
+
 void parametrosParaInteiro(int numeroArgumentos, char **argumentos, int *metodo, int *quantidade, int *situacao, int *P) {
   if(numeroArgumentos >= 4 && numeroArgumentos < 6) { 
     *metodo = atoi(argumentos[1]);
@@ -8,7 +16,7 @@ void parametrosParaInteiro(int numeroArgumentos, char **argumentos, int *metodo,
     *P = 0;
 
     if(numeroArgumentos == 5) {
-      if(strcmp(argumentos[5], "-P") == 0) {
+      if(strcmp(argumentos[4], "-P") == 0) {
         *P = 1;
       }
     }
@@ -54,9 +62,9 @@ FILE* validaEntrada(int numeroArgumentos, int metodo, int quantidade, int situac
     }
   }
 
-  // if(P == 1) {
-  //   imprimeArquivo(arquivo, quantidade);
-  // }
+  if(P == 1) {
+    imprimeArquivo(arquivo, quantidade);
+  }
 
   return arquivo;
 }
