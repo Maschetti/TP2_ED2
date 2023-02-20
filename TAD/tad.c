@@ -30,3 +30,18 @@ void fscanfAluno(FILE* arquivo, Aluno* aluno) {
   aluno->curso[30] = '\0';
   getc(arquivo);//limpa nova linha
 }
+
+void iniciaFita(Fita *fita, FILE *arquivo) {
+  fita->arquivo = arquivo;
+  fita->numeroBlocos = 0;
+}
+
+void iniciaItem(Item *item) {
+  item->marcado = 0;
+}
+
+void iniciaBlocoEntrada(BlocoEntrada *bloco) {
+  for(int i = 0; i < f; i++) {
+    iniciaItem(&bloco->itens[i]);
+  }
+}
