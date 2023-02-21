@@ -11,7 +11,7 @@ int main(int numeroArgumentos, char **argumentos) {
   parametrosParaInteiro(numeroArgumentos, argumentos, &metodo, &quantidade, &situacao, &P);
   if((arquivo = validaEntrada(numeroArgumentos, metodo, quantidade, situacao, P)) != NULL) {
     if(metodo == 1) {
-      IBVC2F();
+      IBVC2F(arquivo);
     }
     else if(metodo == 2) {
       IBVCF1();
