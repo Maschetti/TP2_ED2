@@ -4,8 +4,8 @@ void printAluno(Aluno aluno) {
   printf("%08d %05.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
 }
 
-void fprintAluno(Aluno aluno) {
-  printf("%08d %5.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
+void fprintAluno(Aluno aluno, FILE* arquivo) {
+  fprintf(arquivo, "%08d %5.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
 }
 
 void fscanfAluno(FILE* arquivo, Aluno* aluno) {
@@ -36,12 +36,18 @@ void iniciaFita(Fita *fita, FILE *arquivo) {
   fita->numeroBlocos = 0;
 }
 
-void iniciaItem(Item *item) {
+void zeraItem(Item *item) {
   item->marcado = 0;
 }
 
-void iniciaBlocoEntrada(BlocoEntrada *bloco) {
+void zeraBlocoEntrada(BlocoEntrada *bloco) {
   for(int i = 0; i < f; i++) {
-    iniciaItem(&bloco->itens[i]);
+    zeraItem(&bloco->itens[i]);
   }
+}
+
+void printaBlocoEntrada(BlocoEntrada bloco) {
+  for (int i = 0; i < f; i++) {
+    printf("%6.1lf -> %d\n", bloco.itens[i].aluno.nota, bloco.itens[i].marcado);
+  } 
 }

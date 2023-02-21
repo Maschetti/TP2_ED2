@@ -24,13 +24,15 @@ typedef struct Item {
 
 typedef struct BlocoEntrada {
   Item itens[f];
+  double ultimoInserido;
 } BlocoEntrada;
 
 void printAluno(Aluno aluno);
-void fprintAluno(Aluno aluno);
+void fprintAluno(Aluno aluno, FILE* arquivo);
 void fscanfAluno(FILE* arquivo, Aluno* aluno);
 void iniciaFita(Fita *fita, FILE *arquivo);
-void iniciaItem(Item *item);
-void iniciaBlocoEntrada(BlocoEntrada *bloco);
+void zeraItem(Item *item);
+void zeraBlocoEntrada(BlocoEntrada *bloco);
+void printaBlocoEntrada(BlocoEntrada bloco);
 
 #endif
