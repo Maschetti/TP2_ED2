@@ -4,6 +4,6 @@
 #include <stdlib.h>
 #include "../TAD/tad.h"
 
-void IBVC2F();
+void IBVC2F(FILE *arquivo);
 
 #endif
