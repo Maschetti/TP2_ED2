@@ -29,7 +29,9 @@ typedef struct BlocoEntrada {
 
 void printAluno(Aluno aluno);
 void fprintAluno(Aluno aluno, FILE* arquivo);
+void fwriteAluno(Aluno aluno, FILE *arquivo);
 void fscanfAluno(FILE* arquivo, Aluno* aluno);
+void freadAluno(FILE *arquivo, Aluno *aluno);
 void iniciaFita(Fita *fita, FILE *arquivo);
 void zeraItem(Item *item);
 void zeraBlocoEntrada(BlocoEntrada *bloco);

@@ -5,7 +5,11 @@ void printAluno(Aluno aluno) {
 }
 
 void fprintAluno(Aluno aluno, FILE* arquivo) {
-  fprintf(arquivo, "%08d %5.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
+  fprintf(arquivo, "%08d %05.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
+}
+
+void fwriteAluno(Aluno aluno, FILE *arquivo) {
+  fwrite(&aluno, 1, sizeof(Aluno), arquivo);
 }
 
 void fscanfAluno(FILE* arquivo, Aluno* aluno) {
@@ -29,6 +33,10 @@ void fscanfAluno(FILE* arquivo, Aluno* aluno) {
   }
   aluno->curso[30] = '\0';
   getc(arquivo);//limpa nova linha
+}
+
+void freadAluno(FILE *arquivo, Aluno *aluno) {
+  fread(aluno, sizeof(Aluno), 1, arquivo);
 }
 
 void iniciaFita(Fita *fita, FILE *arquivo) {
