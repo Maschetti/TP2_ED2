@@ -122,11 +122,11 @@ void reescreveContadorAlunos(FILE *arquivo, int contadorAlunos, long desloc) {
   fseek(arquivo, 0, SEEK_END);
 }
 
-Fita* iniciaFitas() {
-  Fita *fitas = malloc(sizeof(Fita) * (2 * f));
+Fita* iniciaFitas(int numeroFitas) {
+  Fita *fitas = malloc(sizeof(Fita) * (numeroFitas));
   char nomeArquivo[16];
   FILE *arquivo = NULL;
-  for(int i = 0; i < (2 * f); i++) {
+  for(int i = 0; i < (numeroFitas); i++) {
     snprintf(nomeArquivo, 16, "Fitas/f_%d.bin", i + 1);
     arquivo = fopen(nomeArquivo, "w+b");
     iniciaFita(&fitas[i], arquivo);
@@ -154,7 +154,7 @@ void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
       contadorAlunos = 0;
       //salva a posicao para substituicao do contador
       desloc = ftell(fitas[i].arquivo);
-      fwrite(&contadorAlunos, 1, sizeof(int), fitas[i].arquivo);
+      fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
       while(!todosMarcados(bloco) && !todosNegativos(bloco)) {
         heapBlocoEntrada(&bloco);
         fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
