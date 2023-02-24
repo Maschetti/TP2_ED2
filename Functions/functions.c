@@ -135,6 +135,7 @@ Fita* iniciaFitas(int numeroFitas) {
 }
 
 void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
+  int alunosNaoLidos = numeroAlunos, alunosPrintados = 0;
   BlocoEntrada bloco;
   Aluno aluno;
   Item item;
@@ -146,10 +147,10 @@ void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
     fscanfAluno(arquivo, &aluno);
     bloco.itens[i].aluno = aluno;
   }
-  numeroAlunos -= f;
+  alunosNaoLidos -= f;
 
   //criacao de blocos
-  while(numeroAlunos > 0) {
+  while(alunosPrintados < numeroAlunos) {
     for(int i = 0; i < f; i++) {
       contadorAlunos = 0;
       //salva a posicao para substituicao do contador
@@ -157,14 +158,16 @@ void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
       fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
       while(!todosMarcados(bloco) && !todosNegativos(bloco)) {
         heapBlocoEntrada(&bloco);
+        if(alunosPrintados == numeroAlunos) break;
         fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
+        alunosPrintados++;
         contadorAlunos++;
         bloco.ultimoInserido = bloco.itens[0].aluno.nota;
 
         //caso ja tanha sido lido todos os valores de entrada para de ler
-        if(numeroAlunos != 0) {
+        if(alunosNaoLidos != 0) {
           fscanfAluno(arquivo, &aluno);
-          numeroAlunos--;
+          alunosNaoLidos--;
 
           item.aluno = aluno;
           if((item.aluno.nota < bloco.ultimoInserido)) {
@@ -175,15 +178,12 @@ void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
           bloco.itens[0] = item;
         }
         // marca os itens caso esteja nos ultimos itens
-        else {
-          bloco.itens[0].aluno.nota = -1;
-        }
+        else bloco.itens[0].aluno.nota = -1;
       }
       if(contadorAlunos != 0) {
         fitas[i].numeroBlocos++;
         reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
       }
-      if(todosNegativos(bloco)) break;
 
       zeraBlocoEntrada(&bloco);
     }

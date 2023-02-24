@@ -60,7 +60,7 @@ void printaBlocoEntrada(BlocoEntrada bloco) {
   } 
 }
 
-void iniciaBlocoLeitura(BlocoLeitura *bloco, int numeroItens) {
+void iniciaLeitura(Leitura *bloco, int numeroItens) {
   bloco->numeroItens = numeroItens;
   bloco->itensLidos = 0;
 }
