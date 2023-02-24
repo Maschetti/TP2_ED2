@@ -27,6 +27,16 @@ typedef struct BlocoEntrada {
   double ultimoInserido;
 } BlocoEntrada;
 
+typedef struct BlocoLeitura {
+  int numeroItens;
+  int itensLidos;
+} BlocoLeitura;
+
+typedef struct FitaLeitura {
+  int numeroBlocos;
+  int blocosLidos;
+} FitaLeitura;
+
 void printAluno(Aluno aluno);
 void fprintAluno(Aluno aluno, FILE* arquivo);
 void fwriteAluno(Aluno aluno, FILE *arquivo);
@@ -36,5 +46,6 @@ void iniciaFita(Fita *fita, FILE *arquivo);
 void zeraItem(Item *item);
 void zeraBlocoEntrada(BlocoEntrada *bloco);
 void printaBlocoEntrada(BlocoEntrada bloco);
+void iniciaBlocoLeitura(BlocoLeitura *bloco, int numeroItens);
 
 #endif

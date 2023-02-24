@@ -9,7 +9,7 @@ void fprintAluno(Aluno aluno, FILE* arquivo) {
 }
 
 void fwriteAluno(Aluno aluno, FILE *arquivo) {
-  fwrite(&aluno, 1, sizeof(Aluno), arquivo);
+  fwrite(&aluno, sizeof(Aluno), 1, arquivo);
 }
 
 void fscanfAluno(FILE* arquivo, Aluno* aluno) {
@@ -58,4 +58,9 @@ void printaBlocoEntrada(BlocoEntrada bloco) {
   for (int i = 0; i < f; i++) {
     printf("%6.1lf -> %d\n", bloco.itens[i].aluno.nota, bloco.itens[i].marcado);
   } 
+}
+
+void iniciaBlocoLeitura(BlocoLeitura *bloco, int numeroItens) {
+  bloco->numeroItens = numeroItens;
+  bloco->itensLidos = 0;
 }
