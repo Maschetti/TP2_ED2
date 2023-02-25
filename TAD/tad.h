@@ -20,6 +20,7 @@ typedef struct Fita {
 typedef struct Item {
   Aluno aluno;
   int marcado;
+  int fim;
 } Item;
 
 typedef struct BlocoEntrada {
@@ -39,6 +40,7 @@ void fscanfAluno(FILE* arquivo, Aluno* aluno);
 void freadAluno(FILE *arquivo, Aluno *aluno);
 void iniciaFita(Fita *fita, FILE *arquivo);
 void zeraItem(Item *item);
+void marcaItem(Item *item);
 void zeraBlocoEntrada(BlocoEntrada *bloco);
 void printaBlocoEntrada(BlocoEntrada bloco);
 void iniciaLeitura(Leitura *bloco, int numeroItens);

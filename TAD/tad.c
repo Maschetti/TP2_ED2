@@ -48,6 +48,10 @@ void zeraItem(Item *item) {
   item->marcado = 0;
 }
 
+void marcaItem(Item *item) {
+  item->marcado = 1;
+}
+
 void zeraBlocoEntrada(BlocoEntrada *bloco) {
   for(int i = 0; i < f; i++) {
     zeraItem(&bloco->itens[i]);

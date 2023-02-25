@@ -13,6 +13,8 @@ FILE* validaEntrada(int numeroArgumentos, int metodo, int qauntidade, int situac
 
 void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos);
 
+void newsubstituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos);
+
 Fita* iniciaFitas(int numeroFitas);
 
 #endif

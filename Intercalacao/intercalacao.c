@@ -78,36 +78,36 @@ void IBVCF1(Fita *fitas) {
   int posicaoMenorNota, somaItens;
   // printaBlocosLeitura(blocosLeitura);
 
-  for(int i = 0; i < f; i++) iniciaLeitura(&fitasLeitura[i], fitas[i].numeroBlocos);
+  // for(int i = 0; i < f; i++) iniciaLeitura(&fitasLeitura[i], fitas[i].numeroBlocos);
 
-  for(int index = 0; continuarIntercalando(fitasLeitura, index); index++) {
-    preencheBlocosLeitura(blocosLeitura, fitas, fitasLeitura);
+  // for(int index = 0; continuarIntercalando(fitasLeitura, index); index++) {
+  //   preencheBlocosLeitura(blocosLeitura, fitas, fitasLeitura);
     
-    //preenche o vetor para comecar a ordenar
-    for(int i = 0; i < f; i++) {
-      if(blocosLeitura[i].numeroItens != blocosLeitura[i].itensLidos) {
-        freadAluno(fitas[i].arquivo, &vetorAlunos[i]);
-        blocosLeitura[i].itensLidos++;
-      }
-      else vetorAlunos[i].nota = -1;
-    }
+  //   //preenche o vetor para comecar a ordenar
+  //   for(int i = 0; i < f; i++) {
+  //     if(blocosLeitura[i].numeroItens != blocosLeitura[i].itensLidos) {
+  //       freadAluno(fitas[i].arquivo, &vetorAlunos[i]);
+  //       blocosLeitura[i].itensLidos++;
+  //     }
+  //     else vetorAlunos[i].nota = -1;
+  //   }
 
-    somaItens = numeroItensTodosBlocos(blocosLeitura);
-    fwrite(&somaItens, sizeof(int), 1, fitas[f].arquivo);
+  //   somaItens = numeroItensTodosBlocos(blocosLeitura);
+  //   fwrite(&somaItens, sizeof(int), 1, fitas[f].arquivo);
 
-    for(int i = 0; i < somaItens; i++) {
-      posicaoMenorNota = indexMenorNota(vetorAlunos);
-      fwriteAluno(vetorAlunos[posicaoMenorNota], fitas[f].arquivo);
-      if(blocosLeitura[posicaoMenorNota].itensLidos != blocosLeitura[posicaoMenorNota].numeroItens) {
-        freadAluno(fitas[posicaoMenorNota].arquivo, &vetorAlunos[posicaoMenorNota]);
-        blocosLeitura[posicaoMenorNota].itensLidos++;
-      }
-      else vetorAlunos[posicaoMenorNota].nota = -1;
-    }
+  //   for(int i = 0; i < somaItens; i++) {
+  //     posicaoMenorNota = indexMenorNota(vetorAlunos);
+  //     fwriteAluno(vetorAlunos[posicaoMenorNota], fitas[f].arquivo);
+  //     if(blocosLeitura[posicaoMenorNota].itensLidos != blocosLeitura[posicaoMenorNota].numeroItens) {
+  //       freadAluno(fitas[posicaoMenorNota].arquivo, &vetorAlunos[posicaoMenorNota]);
+  //       blocosLeitura[posicaoMenorNota].itensLidos++;
+  //     }
+  //     else vetorAlunos[posicaoMenorNota].nota = -1;
+  //   }
 
-    incrementaFitasLeitura(fitasLeitura);
-    fitas[f].numeroBlocos++;
-  }
+  //   incrementaFitasLeitura(fitasLeitura);
+  //   fitas[f].numeroBlocos++;
+  // }
 
   
 
@@ -128,7 +128,8 @@ void intercalacao(FILE* arquivo, int numeroAlunos, int qualIntercalacao) {
   int numeroFitas = (qualIntercalacao == 1 ? (2 * f) : (f + 1));
   Fita *fitas = iniciaFitas(numeroFitas);
   // coloca os valores de entrada na fita
-  substituicaoSelecao(arquivo, fitas, numeroAlunos);
+  // substituicaoSelecao(arquivo, fitas, numeroAlunos);
+  newsubstituicaoSelecao(arquivo, fitas, numeroAlunos);
 
   ponteirosInicioFitas(fitas);
 
