@@ -54,7 +54,7 @@ void marcaItem(Item *item) {
 
 void zeraBlocoEntrada(BlocoEntrada *bloco) {
   for(int i = 0; i < f; i++) {
-    zeraItem(&bloco->itens[i]);
+    if(!bloco->itens[i].fim) zeraItem(&bloco->itens[i]);
   }
 }
 

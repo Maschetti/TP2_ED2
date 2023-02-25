@@ -111,9 +111,9 @@ void IBVCF1(Fita *fitas) {
 
   
 
-  fseek(fitas[0].arquivo, 0, SEEK_SET);
-  for(int i = 0; i < fitas[0].numeroBlocos; i++) {
-    printaBloco(fitas[0].arquivo);
+  fseek(fitas[1].arquivo, 0, SEEK_SET);
+  for(int i = 0; i < fitas[1].numeroBlocos; i++) {
+    printaBloco(fitas[1].arquivo);
   }
   free(blocosLeitura);
   free(fitasLeitura);
@@ -128,8 +128,7 @@ void intercalacao(FILE* arquivo, int numeroAlunos, int qualIntercalacao) {
   int numeroFitas = (qualIntercalacao == 1 ? (2 * f) : (f + 1));
   Fita *fitas = iniciaFitas(numeroFitas);
   // coloca os valores de entrada na fita
-  // substituicaoSelecao(arquivo, fitas, numeroAlunos);
-  newsubstituicaoSelecao(arquivo, fitas, numeroAlunos);
+  substituicaoSelecao(arquivo, fitas, numeroAlunos);
 
   ponteirosInicioFitas(fitas);
 

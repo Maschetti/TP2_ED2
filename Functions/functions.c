@@ -158,7 +158,15 @@ int todosAlunosPrintados(int alunosPrintados, int numeroAlunos) {
   return (alunosPrintados == numeroAlunos);
 }
 
-void newsubstituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
+int teste(BlocoEntrada bloco) {
+  int soma = 0;
+  for (int i = 0; i < f; i++) {
+    soma += ((bloco.itens[i].marcado != bloco.itens[i].fim) ? 1 : 0);
+  }
+  return (soma == f);
+}
+
+void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
   BlocoEntrada bloco;
   int contadorAlunos, alunosPrintados = 0, alunosNaoLidos = numeroAlunos;
   long desloc;
@@ -172,9 +180,17 @@ void newsubstituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
       //salva posicao para substituir o contadorAlunos
       desloc = ftell(fitas[i].arquivo);
       fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
-      while(!todosMarcados(bloco) && !todosFim(bloco)) {
+      while(!todosMarcados(bloco) && !todosFim(bloco) && !teste(bloco)) {
         heapBlocoEntrada(&bloco);
         fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
+        if(bloco.itens[0].marcado) {
+          printf("PRINTOU MARCADO\n");
+          for(int j = 0; j < f; j++) {
+            printf("Marcado = %d || Fim = %d\n", bloco.itens[j].marcado, bloco.itens[j].fim);
+          }
+          printf("\n");
+          getc(stdin);
+        }
         alunosPrintados++;
         // printf("%d == %d\n", alunosPrintados, numeroAlunos);
         contadorAlunos++;
@@ -191,62 +207,6 @@ void newsubstituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
       }
 
       if(novoBloco(contadorAlunos)) {
-        fitas[i].numeroBlocos++;
-        reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
-      }
-
-      zeraBlocoEntrada(&bloco);
-    }
-  }
-}
-
-void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
-  int alunosNaoLidos = numeroAlunos, alunosPrintados = 0;
-  BlocoEntrada bloco;
-  Aluno aluno;
-  Item item;
-  long desloc;
-  int contadorAlunos;
-  zeraBlocoEntrada(&bloco);
-  // preenche o bloco
-  for(int i = 0; i < f; i++) {
-    fscanfAluno(arquivo, &aluno);
-    bloco.itens[i].aluno = aluno;
-  }
-  alunosNaoLidos -= f;
-
-  //criacao de blocos
-  while(alunosPrintados < numeroAlunos) {
-    for(int i = 0; i < f; i++) {
-      contadorAlunos = 0;
-      //salva a posicao para substituicao do contador
-      desloc = ftell(fitas[i].arquivo);
-      fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
-      while(!todosMarcados(bloco)) {
-        heapBlocoEntrada(&bloco);
-        if(alunosPrintados == numeroAlunos) break;
-        fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
-        alunosPrintados++;
-        contadorAlunos++;
-        bloco.ultimoInserido = bloco.itens[0].aluno.nota;
-
-        //caso ja tanha sido lido todos os valores de entrada para de ler
-        if(alunosNaoLidos != 0) {
-          fscanfAluno(arquivo, &aluno);
-          alunosNaoLidos--;
-
-          item.aluno = aluno;
-          if((item.aluno.nota < bloco.ultimoInserido)) {
-            item.marcado = 1;
-          }
-          else zeraItem(&item);
-
-          bloco.itens[0] = item;
-        }
-        // marca os itens caso esteja nos ultimos itens
-        else bloco.itens[0].aluno.nota = -1;
-      }
-      if(contadorAlunos != 0) {
         fitas[i].numeroBlocos++;
         reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
       }
