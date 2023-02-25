@@ -158,7 +158,7 @@ int todosAlunosPrintados(int alunosPrintados, int numeroAlunos) {
   return (alunosPrintados == numeroAlunos);
 }
 
-int teste(BlocoEntrada bloco) {
+int euSouBom(BlocoEntrada bloco) {
   int soma = 0;
   for (int i = 0; i < f; i++) {
     soma += ((bloco.itens[i].marcado != bloco.itens[i].fim) ? 1 : 0);
@@ -180,7 +180,7 @@ void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
       //salva posicao para substituir o contadorAlunos
       desloc = ftell(fitas[i].arquivo);
       fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
-      while(!todosMarcados(bloco) && !todosFim(bloco) && !teste(bloco)) {
+      while(!todosMarcados(bloco) && !todosFim(bloco) && !euSouBom(bloco)) {
         heapBlocoEntrada(&bloco);
         fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
         if(bloco.itens[0].marcado) {
