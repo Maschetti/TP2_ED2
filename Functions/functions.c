@@ -69,19 +69,30 @@ FILE* validaEntrada(int numeroArgumentos, int metodo, int quantidade, int situac
   return arquivo;
 }
 
+void printaBloco(FILE *arquivo) {
+  int numeroItens;
+  fread(&numeroItens, sizeof(int), 1, arquivo);
+  Aluno aux;
+  printf("%d\n", numeroItens);
+  for(int i = 0; i < numeroItens; i ++) {
+    fread(&aux, sizeof(Aluno), 1, arquivo);
+    printAluno(aux);
+  }
+}
+
 int comparaItem(Item x, Item y) {
   if(x.fim) return 1;
   if(y.fim) return 0;
-  if((x.aluno.nota > y.aluno.nota) && (x.marcado == y.marcado)) return 1;
+  if(x.marcado == y.marcado) return (x.aluno.nota > y.aluno.nota);
   if(x.marcado) return 1;
   return 0;
 }
 
-void heapBE(BlocoEntrada *bloco, int posicaoPai) {
+void heapBE(BlocoEntrada *bloco, int posicaoPai, int numeroFitasEntrada) {
   Item auxiliar = bloco->itens[posicaoPai];
   int posicaoFilho = posicaoPai * 2 + 1;
-  while(posicaoFilho < f) {
-    if(posicaoFilho < f - 1) {
+  while(posicaoFilho < numeroFitasEntrada) {
+    if(posicaoFilho < numeroFitasEntrada - 1) {
       if(!comparaItem(bloco->itens[posicaoFilho + 1], bloco->itens[posicaoFilho])) posicaoFilho++; 
     }
     if(!comparaItem(bloco->itens[posicaoFilho], auxiliar)) {
@@ -89,29 +100,15 @@ void heapBE(BlocoEntrada *bloco, int posicaoPai) {
       posicaoPai = posicaoFilho;
       posicaoFilho = 2 * posicaoPai + 1;
     }
-    else posicaoFilho = f;
+    else posicaoFilho = numeroFitasEntrada;
   }
   bloco->itens[posicaoPai] = auxiliar;
 }
 
-void heapBlocoEntrada(BlocoEntrada *bloco) {
-  for(int posicaoPai = (f - 1) / 2; posicaoPai >= 0; posicaoPai--) {
-    heapBE(bloco, posicaoPai);
+void heapBlocoEntrada(BlocoEntrada *bloco, int numeroFitasEntrada) {
+  for(int posicaoPai = (numeroFitasEntrada - 1) / 2; posicaoPai >= 0; posicaoPai--) {
+    heapBE(bloco, posicaoPai, numeroFitasEntrada);
   }
-}
-
-int todosMarcados(BlocoEntrada bloco) {
-  for(int i = 0; i < f; i++) {
-    if(bloco.itens[i].marcado == 0) return 0;
-  }
-  return 1;
-}
-
-int todosFim(BlocoEntrada bloco) {
-  for(int i = 0; i < f; i++) {
-    if(bloco.itens[i].fim == 0) return 0;
-  }
-  return 1;
 }
 
 void reescreveContadorAlunos(FILE *arquivo, int contadorAlunos, long desloc) {
@@ -120,98 +117,73 @@ void reescreveContadorAlunos(FILE *arquivo, int contadorAlunos, long desloc) {
   fseek(arquivo, 0, SEEK_END);
 }
 
-Fita* iniciaFitas(int numeroFitas) {
-  Fita *fitas = malloc(sizeof(Fita) * (numeroFitas));
-  char nomeArquivo[16];
+Fita* iniciaFitas() {
+  Fita *fitas = malloc(sizeof(Fita) * (2 * f));
+  char nomeArquivo[20];
   FILE *arquivo = NULL;
-  for(int i = 0; i < (numeroFitas); i++) {
-    snprintf(nomeArquivo, 16, "Fitas/f_%d.bin", i + 1);
+  for(int i = 0; i < (2 * f); i++) {
+    snprintf(nomeArquivo, 20, "Fitas/f_%d.bin", i + 1);
     arquivo = fopen(nomeArquivo, "w+b");
     iniciaFita(&fitas[i], arquivo);
   }
   return fitas;
 }
 
-void preencheBlocoEntrada1vez(FILE *arquivo, BlocoEntrada *bloco) {
+void ponteirosInicioFitas(Fita *fitas) {
+  for(int i = 0; i < 2 * f; i++) {
+    fseek(fitas[i].arquivo, 0, SEEK_SET);
+  }
+}
+
+void encheBlocoEntrada(FILE *arquivo, BlocoEntrada *bloco, int numeroFitasEntrada) {
   Aluno aluno;
-  for(int i = 0; i < f; i++) {
+  bloco->itens = (Item *) malloc(sizeof(Item) * numeroFitasEntrada);
+  for(int i = 0; i < numeroFitasEntrada; i++) {
     fscanfAluno(arquivo, &aluno);
     bloco->itens[i].aluno = aluno;
     bloco->itens[i].fim = 0;
+    bloco->itens[i].marcado = 0;
   }
-  zeraBlocoEntrada(bloco);
 }
 
-int temAlunoParaLer(int alunosRestante) {
-  return (alunosRestante > 0);
-}
-
-void chegouAoFim(Item *item) {
-  item->fim = 1;
-}
-
-int novoBloco(int contadorAlunos) {
-  return (contadorAlunos > 0);
-}
-
-int todosAlunosPrintados(int alunosPrintados, int numeroAlunos) {
-  return (alunosPrintados == numeroAlunos);
-}
-
-int euSouBom(BlocoEntrada bloco) {
-  int soma = 0;
-  for (int i = 0; i < f; i++) {
-    soma += ((bloco.itens[i].marcado != bloco.itens[i].fim) ? 1 : 0);
-  }
-  return (soma == f);
-}
-
-void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos) {
+void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos, int numeroFitasEntrada) {
   BlocoEntrada bloco;
-  int contadorAlunos, alunosPrintados = 0, alunosNaoLidos = numeroAlunos;
+  int contadorAlunos, alunosPrintados = 0, alunosNaoLidos = numeroAlunos, i = 0;
   long desloc;
 
-  preencheBlocoEntrada1vez(arquivo, &bloco);
-  alunosNaoLidos -= f;
+  encheBlocoEntrada(arquivo, &bloco, numeroFitasEntrada);
+  alunosNaoLidos -= numeroFitasEntrada;
+  heapBlocoEntrada(&bloco, numeroFitasEntrada);
 
-  while(!todosAlunosPrintados(alunosPrintados, numeroAlunos)) {
-    for(int i = 0; i < f; i++) {
-      contadorAlunos = 0;
-      //salva posicao para substituir o contadorAlunos
-      desloc = ftell(fitas[i].arquivo);
-      fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
-      while(!todosMarcados(bloco) && !todosFim(bloco) && !euSouBom(bloco)) {
-        heapBlocoEntrada(&bloco);
-        fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
-        if(bloco.itens[0].marcado) {
-          printf("PRINTOU MARCADO\n");
-          for(int j = 0; j < f; j++) {
-            printf("Marcado = %d || Fim = %d\n", bloco.itens[j].marcado, bloco.itens[j].fim);
-          }
-          printf("\n");
-          getc(stdin);
-        }
-        alunosPrintados++;
-        // printf("%d == %d\n", alunosPrintados, numeroAlunos);
-        contadorAlunos++;
-        bloco.ultimoInserido = bloco.itens[0].aluno.nota;
+  while(alunosPrintados < numeroAlunos) {
+    contadorAlunos = 0;
+    desloc = ftell(fitas[i].arquivo);
+    fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
+    
+    while(!bloco.itens[0].fim && !bloco.itens[0].marcado) {
+      fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
+      bloco.ultimoInserido = bloco.itens[0].aluno.nota;
+      alunosPrintados++;
+      contadorAlunos++;
 
-        if(temAlunoParaLer(alunosNaoLidos)) {
-          fscanfAluno(arquivo, &bloco.itens[0].aluno);
-          alunosNaoLidos--;
+      if(alunosNaoLidos > 0) {
+        fscanfAluno(arquivo, &bloco.itens[0].aluno);
+        alunosNaoLidos--;
 
-          if(bloco.itens[0].aluno.nota < bloco.ultimoInserido) marcaItem(&bloco.itens[0]);
-          else zeraItem(&bloco.itens[0]);
-        }
-        else chegouAoFim(&bloco.itens[0]);
+        if(bloco.itens[0].aluno.nota < bloco.ultimoInserido) bloco.itens[0].marcado = 1;
       }
+      else bloco.itens[0].fim = 1;
 
-      if(novoBloco(contadorAlunos)) {
-        fitas[i].numeroBlocos++;
-        reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
-      }
-
-      zeraBlocoEntrada(&bloco);
+      heapBE(&bloco, 0, numeroFitasEntrada);
     }
+
+    if(contadorAlunos > 0) {
+      fitas[i].numeroBlocos++;
+      reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
+    }
+
+    for(int i = 0; i < numeroFitasEntrada; i++) bloco.itens[i].marcado = 0;
+
+    i = (i + 1) % numeroFitasEntrada;
   }
 }

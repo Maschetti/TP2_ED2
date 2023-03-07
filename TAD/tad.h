@@ -24,7 +24,7 @@ typedef struct Item {
 } Item;
 
 typedef struct BlocoEntrada {
-  Item itens[f];
+  Item *itens;
   double ultimoInserido;
 } BlocoEntrada;
 
@@ -39,10 +39,7 @@ void fwriteAluno(Aluno aluno, FILE *arquivo);
 void fscanfAluno(FILE* arquivo, Aluno* aluno);
 void freadAluno(FILE *arquivo, Aluno *aluno);
 void iniciaFita(Fita *fita, FILE *arquivo);
-void zeraItem(Item *item);
-void marcaItem(Item *item);
-void zeraBlocoEntrada(BlocoEntrada *bloco);
 void printaBlocoEntrada(BlocoEntrada bloco);
-void iniciaLeitura(Leitura *bloco, int numeroItens);
+void iniciaLeitura(Leitura *leitura, int numeroItens);
 
 #endif

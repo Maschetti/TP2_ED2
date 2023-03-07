@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "Functions/functions.h"
-#include "Intercalacao/intercalacao.h"
+#include "IBVCF1/ibvcf1.h"
 #include "QuickSortExterno/quickSorteExterno.h"
 #include "Tad/tad.h"
 
@@ -9,11 +9,11 @@ int main(int numeroArgumentos, char **argumentos) {
   int metodo, quantidade, situacao, P;
   parametrosParaInteiro(numeroArgumentos, argumentos, &metodo, &quantidade, &situacao, &P);
   if((arquivo = validaEntrada(numeroArgumentos, metodo, quantidade, situacao, P)) != NULL) {
-    if(metodo == 3) {
-      quickSortExterno();
+    if(metodo == 2) {
+      ibvcf1(arquivo, quantidade);
     }
     else {
-      intercalacao(arquivo, quantidade, metodo);
+      quickSortExterno();
     }
 
     fclose(arquivo);

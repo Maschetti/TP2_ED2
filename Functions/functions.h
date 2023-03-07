@@ -11,8 +11,12 @@ void parametrosParaInteiro(int numeroArgumentos, char **argumentos, int *metodo,
 
 FILE* validaEntrada(int numeroArgumentos, int metodo, int qauntidade, int situacao, int P);
 
-void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos);
+void ponteirosInicioFitas(Fita *fitas);
 
-Fita* iniciaFitas(int numeroFitas);
+void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos, int numeroFitasEntrada);
+
+Fita* iniciaFitas();
+
+void printaBloco(FILE *arquivo);
 
 #endif

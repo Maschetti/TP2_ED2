@@ -44,27 +44,13 @@ void iniciaFita(Fita *fita, FILE *arquivo) {
   fita->numeroBlocos = 0;
 }
 
-void zeraItem(Item *item) {
-  item->marcado = 0;
-}
-
-void marcaItem(Item *item) {
-  item->marcado = 1;
-}
-
-void zeraBlocoEntrada(BlocoEntrada *bloco) {
-  for(int i = 0; i < f; i++) {
-    if(!bloco->itens[i].fim) zeraItem(&bloco->itens[i]);
-  }
-}
-
 void printaBlocoEntrada(BlocoEntrada bloco) {
   for (int i = 0; i < f; i++) {
-    printf("%6.1lf -> %d\n", bloco.itens[i].aluno.nota, bloco.itens[i].marcado);
+    printf("%6.1lf -> %d >> %d\n", bloco.itens[i].aluno.nota, bloco.itens[i].marcado, bloco.itens[0].fim);
   } 
 }
 
-void iniciaLeitura(Leitura *bloco, int numeroItens) {
-  bloco->numeroItens = numeroItens;
-  bloco->itensLidos = 0;
+void iniciaLeitura(Leitura *leitura, int numeroItens) {
+  leitura->numeroItens = numeroItens;
+  leitura->itensLidos = 0;
 }
