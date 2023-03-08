@@ -137,7 +137,7 @@ void ponteirosInicioFitas(Fita *fitas) {
 
 void encheBlocoEntrada(FILE *arquivo, BlocoEntrada *bloco, int numeroFitasEntrada) {
   Aluno aluno;
-  bloco->itens = (Item *) malloc(sizeof(Item) * numeroFitasEntrada);
+  bloco->itens = malloc(sizeof(Item) * numeroFitasEntrada);
   for(int i = 0; i < numeroFitasEntrada; i++) {
     fscanfAluno(arquivo, &aluno);
     bloco->itens[i].aluno = aluno;

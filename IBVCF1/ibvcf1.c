@@ -95,7 +95,7 @@ void intercalacaoF1(Fita *fitas, int numeroFitasEntrada) {
     ponteirosInicioFitas(fitas);
     for(int i = 0; i < numeroFitasEntrada; i++) iniciaLeitura(&fitasLeitura[i], fitas[i].numeroBlocos);
 
-    for(int index = 0; continuarIntercalando(fitasLeitura, index, numeroFitasEntrada); index++) {
+    for(int index = 0; fitasLeitura[0].numeroItens > index; index++) {
       preencheBlocosLeitura(blocosLeitura, fitas, fitasLeitura, numeroFitasEntrada);
       
       //preenche o vetor para comecar a ordenar
@@ -126,17 +126,13 @@ void intercalacaoF1(Fita *fitas, int numeroFitasEntrada) {
     ponteirosInicioFitas(fitas);
   } while(realocaBlocos(fitas, numeroFitasEntrada));
   
-
-  
-
   fseek(fitas[numeroFitasEntrada].arquivo, 0, SEEK_SET);
   FILE *file = fopen("ascendente.txt", "w");
-  for(int i = 0; i < fitas[numeroFitasEntrada].numeroBlocos; i++) {
-    fread(&somaItens, sizeof(int), 1, fitas[numeroFitasEntrada].arquivo);
-    for(int j = 0; j < somaItens; j++) {
-      freadAluno(fitas[numeroFitasEntrada].arquivo, &aluno);
-      fprintAluno(aluno, file);
-    }
+  fread(&somaItens, sizeof(int), 1, fitas[numeroFitasEntrada].arquivo);
+  printf("SOMA = %d\n", somaItens);
+  for(int j = 0; j < somaItens; j++) {
+    freadAluno(fitas[numeroFitasEntrada].arquivo, &aluno);
+    fprintAluno(aluno, file);
   }
   fclose(file);
   free(blocosLeitura);
@@ -146,6 +142,25 @@ void intercalacaoF1(Fita *fitas, int numeroFitasEntrada) {
 
 void ibvcf1(FILE* arquivo, int numeroAlunos) {
   Fita *fitas = iniciaFitas();
+  printf("FAZENDO A SUSTITUICAO\n");
   substituicaoSelecao(arquivo, fitas, numeroAlunos, 2 * f - 1);
+  printf("ACABOU\n");
+  ponteirosInicioFitas(fitas);
+  printf("AQui");
+  Aluno aluno;
+  int aux, soma = 0;
+  for(int i = 0; i < 2 * f - 1; i++) {
+    for(int x = 0; x < fitas[i].numeroBlocos; x++) {
+      fread(&aux, sizeof(int), 1, fitas[i].arquivo);
+      soma += aux;
+      for(int  j = 0; j < aux; aux++) {
+        freadAluno(fitas[i].arquivo, &aluno);
+      }
+    }
+  }
+  printf("SOMA = %d\n", soma);
+  printf("AQui");
+  getc(stdin);
   intercalacaoF1(fitas, 2 * f - 1);
+  free(fitas);
 }
