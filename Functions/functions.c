@@ -1,4 +1,5 @@
 #include "functions.h"
+#include "../Analises/analise.h"
 
 void imprimeArquivo(FILE* arquivo, int numeroItens) {
   Aluno auxiliar;
@@ -52,10 +53,10 @@ FILE* validaEntrada(int numeroArgumentos, int metodo, int quantidade, int situac
 
   if(valido) {
     if(situacao == 1) {
-      arquivo = fopen("ascendente.txt", "r");
+      arquivo = fopen("PROVAO_ASCENDENTE.txt", "r");
     }
     else if(situacao == 2) {
-      arquivo = fopen("descendente.txt", "r");
+      arquivo = fopen("PROVAO_DESCENDENTE.txt", "r");
     }
     else {
       arquivo = fopen("PROVAO.txt", "r");
@@ -69,17 +70,6 @@ FILE* validaEntrada(int numeroArgumentos, int metodo, int quantidade, int situac
   return arquivo;
 }
 
-void printaBloco(FILE *arquivo) {
-  int numeroItens;
-  fread(&numeroItens, sizeof(int), 1, arquivo);
-  Aluno aux;
-  printf("%d\n", numeroItens);
-  for(int i = 0; i < numeroItens; i ++) {
-    fread(&aux, sizeof(Aluno), 1, arquivo);
-    printAluno(aux);
-  }
-}
-
 int comparaItem(Item x, Item y) {
   if(x.fim) return 1;
   if(y.fim) return 0;
@@ -88,13 +78,36 @@ int comparaItem(Item x, Item y) {
   return 0;
 }
 
-void heapBE(BlocoEntrada *bloco, int posicaoPai, int numeroFitasEntrada) {
+int comparaIntercalador(Intercalador x, Intercalador y) {
+  if(x.fimArquivo) return 1;
+  if(y.fimArquivo) return 0;
+  if(x.fimBloco == y.fimBloco) return (y.aluno.nota < x.aluno.nota);
+  if(x.fimBloco) return 1;
+  return 0;
+}
+
+int indexMenorNota(Intercalador *intercaladores, int numeroFitasEntrada, Analise *analise) {
+  Intercalador key = intercaladores[0];
+  int index = 0;
+  for(int i = 1; i < numeroFitasEntrada; i++) {
+    atualizaComparacoes_ordenacao(analise, 1);
+    if(comparaIntercalador(key, intercaladores[i])) {
+      key = intercaladores[i];
+      index = i;
+    }
+  }
+  return index;
+}
+
+void heapBE(BlocoEntrada *bloco, int posicaoPai, int numeroFitasEntrada, Analise *analise) {
   Item auxiliar = bloco->itens[posicaoPai];
   int posicaoFilho = posicaoPai * 2 + 1;
   while(posicaoFilho < numeroFitasEntrada) {
     if(posicaoFilho < numeroFitasEntrada - 1) {
+      atualizaComparacoes_criacao(analise, 1);
       if(!comparaItem(bloco->itens[posicaoFilho + 1], bloco->itens[posicaoFilho])) posicaoFilho++; 
     }
+    atualizaComparacoes_criacao(analise, 1);
     if(!comparaItem(bloco->itens[posicaoFilho], auxiliar)) {
       bloco->itens[posicaoPai] = bloco->itens[posicaoFilho];
       posicaoPai = posicaoFilho;
@@ -105,85 +118,61 @@ void heapBE(BlocoEntrada *bloco, int posicaoPai, int numeroFitasEntrada) {
   bloco->itens[posicaoPai] = auxiliar;
 }
 
-void heapBlocoEntrada(BlocoEntrada *bloco, int numeroFitasEntrada) {
+void heapBlocoEntrada(BlocoEntrada *bloco, int numeroFitasEntrada, Analise *analise) {
   for(int posicaoPai = (numeroFitasEntrada - 1) / 2; posicaoPai >= 0; posicaoPai--) {
-    heapBE(bloco, posicaoPai, numeroFitasEntrada);
+    heapBE(bloco, posicaoPai, numeroFitasEntrada, analise);
   }
 }
 
-void reescreveContadorAlunos(FILE *arquivo, int contadorAlunos, long desloc) {
-  fseek(arquivo, desloc, SEEK_SET);
-  fwrite(&contadorAlunos, sizeof(int), 1, arquivo);
-  fseek(arquivo, 0, SEEK_END);
+void printaItem(Item item) {
+  printf("M = %d || F = %d\n", item.marcado, item.fim);
 }
 
-Fita* iniciaFitas() {
-  Fita *fitas = malloc(sizeof(Fita) * (2 * f));
-  char nomeArquivo[20];
-  FILE *arquivo = NULL;
-  for(int i = 0; i < (2 * f); i++) {
-    snprintf(nomeArquivo, 20, "Fitas/f_%d.bin", i + 1);
-    arquivo = fopen(nomeArquivo, "w+b");
-    iniciaFita(&fitas[i], arquivo);
-  }
-  return fitas;
-}
-
-void ponteirosInicioFitas(Fita *fitas) {
-  for(int i = 0; i < 2 * f; i++) {
-    fseek(fitas[i].arquivo, 0, SEEK_SET);
-  }
-}
-
-void encheBlocoEntrada(FILE *arquivo, BlocoEntrada *bloco, int numeroFitasEntrada) {
-  Aluno aluno;
-  bloco->itens = malloc(sizeof(Item) * numeroFitasEntrada);
-  for(int i = 0; i < numeroFitasEntrada; i++) {
-    fscanfAluno(arquivo, &aluno);
-    bloco->itens[i].aluno = aluno;
-    bloco->itens[i].fim = 0;
-    bloco->itens[i].marcado = 0;
-  }
-}
-
-void substituicaoSelecao(FILE *arquivo, Fita *fitas, int numeroAlunos, int numeroFitasEntrada) {
+void substituicaoSelecao(FILE *input, FILE **fitas, int numeroAlunos, int numeroFitasEntrada, Analise *analise) {
   BlocoEntrada bloco;
-  int contadorAlunos, alunosPrintados = 0, alunosNaoLidos = numeroAlunos, i = 0;
-  long desloc;
+  bloco.itens = malloc(sizeof(Item) * numeroFitasEntrada);
+  int alunosLidos = 0, index = 0;
+  //preenche o bloco com os primeiros valores
+  for(int i = 0; i < numeroFitasEntrada; i++) {
+    fscanfAluno(input, &bloco.itens[i].aluno);
+    atualizaLeitura_criacao(analise,1);
+    alunosLidos++;
 
-  encheBlocoEntrada(arquivo, &bloco, numeroFitasEntrada);
-  alunosNaoLidos -= numeroFitasEntrada;
-  heapBlocoEntrada(&bloco, numeroFitasEntrada);
-
-  while(alunosPrintados < numeroAlunos) {
-    contadorAlunos = 0;
-    desloc = ftell(fitas[i].arquivo);
-    fwrite(&contadorAlunos, sizeof(int), 1, fitas[i].arquivo);
-    
-    while(!bloco.itens[0].fim && !bloco.itens[0].marcado) {
-      fwriteAluno(bloco.itens[0].aluno, fitas[i].arquivo);
-      bloco.ultimoInserido = bloco.itens[0].aluno.nota;
-      alunosPrintados++;
-      contadorAlunos++;
-
-      if(alunosNaoLidos > 0) {
-        fscanfAluno(arquivo, &bloco.itens[0].aluno);
-        alunosNaoLidos--;
-
-        if(bloco.itens[0].aluno.nota < bloco.ultimoInserido) bloco.itens[0].marcado = 1;
-      }
-      else bloco.itens[0].fim = 1;
-
-      heapBE(&bloco, 0, numeroFitasEntrada);
-    }
-
-    if(contadorAlunos > 0) {
-      fitas[i].numeroBlocos++;
-      reescreveContadorAlunos(fitas[i].arquivo, contadorAlunos, desloc);
-    }
-
-    for(int i = 0; i < numeroFitasEntrada; i++) bloco.itens[i].marcado = 0;
-
-    i = (i + 1) % numeroFitasEntrada;
+    //aproveito o for para desmarcar e avisar que n esta no fim
+    if(i < numeroAlunos) bloco.itens[i].fim = 0;
+    else bloco.itens[i].fim = 1;
+    bloco.itens[i].marcado = 0;
   }
+
+  //faz o heap no bloco de itens
+  heapBlocoEntrada(&bloco, numeroFitasEntrada, analise);
+
+  while(1) {
+    //todos itens ja foram printados
+    if(bloco.itens[0].fim) break;
+    if(bloco.itens[0].marcado) {
+      //desmarca todos os itens pois comecou um novo bloco
+      for(int i = 0; i < numeroFitasEntrada; i++) bloco.itens[i].marcado = 0;
+      //passa para proxima fita
+      index = (index + 1) % numeroFitasEntrada;
+    }
+    fwrite(&bloco.itens[0].aluno, sizeof(Aluno), 1, fitas[index]);
+    atualizaEscrita_criacao(analise,1);
+
+    bloco.ultimoInserido = bloco.itens[0].aluno.nota;
+
+    if(alunosLidos == numeroAlunos) bloco.itens[0].fim = 1;
+    else {
+      fscanfAluno(input, &bloco.itens[0].aluno);
+      atualizaLeitura_criacao(analise, 1);
+      alunosLidos++;
+      atualizaComparacoes_criacao(analise, 1);
+      if(bloco.itens[0].aluno.nota < bloco.ultimoInserido) bloco.itens[0].marcado = 1;
+    }
+
+    //faz o heap apenas na primeira posicao
+    heapBE(&bloco, 0, numeroFitasEntrada, analise);
+  }
+
+  free(bloco.itens);
 }

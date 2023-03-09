@@ -8,10 +8,6 @@ void fprintAluno(Aluno aluno, FILE* arquivo) {
   fprintf(arquivo, "%08d %05.1lf %s %s %s\n", aluno.numeroInscricao, aluno.nota, aluno.estado, aluno.cidade, aluno.curso);
 }
 
-void fwriteAluno(Aluno aluno, FILE *arquivo) {
-  fwrite(&aluno, sizeof(Aluno), 1, arquivo);
-}
-
 void fscanfAluno(FILE* arquivo, Aluno* aluno) {
   fscanf(arquivo, "%d", &aluno->numeroInscricao);
   getc(arquivo);//limpa espaco
@@ -39,18 +35,8 @@ void freadAluno(FILE *arquivo, Aluno *aluno) {
   fread(aluno, sizeof(Aluno), 1, arquivo);
 }
 
-void iniciaFita(Fita *fita, FILE *arquivo) {
-  fita->arquivo = arquivo;
-  fita->numeroBlocos = 0;
-}
-
 void printaBlocoEntrada(BlocoEntrada bloco) {
   for (int i = 0; i < f; i++) {
     printf("%6.1lf -> %d >> %d\n", bloco.itens[i].aluno.nota, bloco.itens[i].marcado, bloco.itens[0].fim);
   } 
-}
-
-void iniciaLeitura(Leitura *leitura, int numeroItens) {
-  leitura->numeroItens = numeroItens;
-  leitura->itensLidos = 0;
 }

@@ -12,11 +12,6 @@ typedef struct Aluno {
   char curso[31];
 } Aluno;
 
-typedef struct Fita {
-  FILE *arquivo;
-  int numeroBlocos;
-} Fita;
-
 typedef struct Item {
   Aluno aluno;
   int marcado;
@@ -28,18 +23,21 @@ typedef struct BlocoEntrada {
   double ultimoInserido;
 } BlocoEntrada;
 
-typedef struct Leitura {
-  int numeroItens;
-  int itensLidos;
-} Leitura;
+typedef struct Intercalador {
+  Aluno aluno;
+  int fimBloco;
+  int fimArquivo;
+} Intercalador;
+
+typedef struct Area {
+  Aluno alunos[f];
+  int quantidade;
+} Area;
 
 void printAluno(Aluno aluno);
 void fprintAluno(Aluno aluno, FILE* arquivo);
-void fwriteAluno(Aluno aluno, FILE *arquivo);
 void fscanfAluno(FILE* arquivo, Aluno* aluno);
-void freadAluno(FILE *arquivo, Aluno *aluno);
-void iniciaFita(Fita *fita, FILE *arquivo);
 void printaBlocoEntrada(BlocoEntrada bloco);
-void iniciaLeitura(Leitura *leitura, int numeroItens);
+int comparaIntercalador(Intercalador x, Intercalador y);
 
 #endif
