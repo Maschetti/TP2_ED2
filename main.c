@@ -16,10 +16,10 @@ int main(int numeroArgumentos, char **argumentos) {
   parametrosParaInteiro(numeroArgumentos, argumentos, &metodo, &quantidade, &situacao, &P);
   if((arquivo = validaEntrada(numeroArgumentos, metodo, quantidade, situacao, P)) != NULL) {
     if(metodo == 1) {
-      ibvcf1(arquivo, quantidade, &analise);
+      ibvc2f(arquivo, quantidade, &analise);
     }
     else if(metodo == 2) {
-      ibvc2f(arquivo, quantidade, &analise);
+      ibvcf1(arquivo, quantidade, &analise);
     }
     else {
       Aluno aluno;
